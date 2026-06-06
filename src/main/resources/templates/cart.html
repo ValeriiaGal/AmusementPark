@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Cart - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+  <div th:replace="~{fragments :: stepper(${step})}"></div>
+
+  <div class="card">
+    <div class="card-header">Your Cart</div>
+
+    <div th:if="${#lists.isEmpty(cartItems)}" style="text-align: center; padding: 32px; color: var(--text-light);">
+      Your cart is empty
+    </div>
+
+    <div th:each="item : ${cartItems}" class="cart-item">
+      <div>
+        <div class="ticket-name">
+          <span th:text="${item.ticketTypeName}">Day Pass</span>
+          <span th:if="${item.vip}" class="badge badge-vip">VIP</span>
+          <span class="badge badge-zones" th:text="${item.zoneCount} + ' zones'">2 zones</span>
+        </div>
+        <div class="ticket-zones" th:text="${item.startDate} + ' → ' + ${item.endDate}">dates</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="cart-controls">
+          <form th:action="@{/cart/update}" method="post" style="display:inline; margin:0;">
+            <input type="hidden" name="ticketTypeId" th:value="${item.ticketTypeId}">
+            <input type="hidden" name="quantity" th:value="${item.quantity - 1}">
+            <button type="submit">-</button>
+          </form>
+          <span class="cart-qty" th:text="${item.quantity}">1</span>
+          <form th:action="@{/cart/update}" method="post" style="display:inline; margin:0;">
+            <input type="hidden" name="ticketTypeId" th:value="${item.ticketTypeId}">
+            <input type="hidden" name="quantity" th:value="${item.quantity + 1}">
+            <button type="submit">+</button>
+          </form>
+        </div>
+        <span class="ticket-price"
+              th:text="${#numbers.formatDecimal(item.unitPrice * item.quantity, 1, 2)} + ' zl'">99.98</span>
+        <form th:action="@{/cart/remove}" method="post" style="margin:0;">
+          <input type="hidden" name="ticketTypeId" th:value="${item.ticketTypeId}">
+          <button type="submit" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:1.2rem;">&times;</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="total-row">
+      <span class="total-label">Total</span>
+      <span class="total-amount" th:text="${#numbers.formatDecimal(total, 1, 2)} + ' zl'">0.00 zl</span>
+    </div>
+
+    <div class="btn-row">
+      <a th:href="@{/tickets}" class="btn btn-outline">+ Add More</a>
+      <a th:href="@{/checkout/summary}"
+         th:classappend="${#lists.isEmpty(cartItems)} ? ' disabled' : ''"
+         class="btn btn-primary" style="flex: 2;">Finalize Order →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

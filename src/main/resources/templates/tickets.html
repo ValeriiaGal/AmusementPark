@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Ticket Types - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+    <h1 class="page-title">All Ticket Types</h1>
+    <p class="page-subtitle">Click a ticket type to see its zones, click a zone to see attractions. Use + Add to add to cart.</p>
+
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <!-- TICKET TYPE LIST -->
+    <div th:each="tt : ${ticketTypes}" class="card ticket-card">
+        <a th:href="@{/tickets(ticketTypeId=${tt.id})}"
+           style="text-decoration: none; color: inherit; flex: 1;">
+            <div class="ticket-name">
+                <span th:text="${tt.typeName}">Day Pass</span>
+                <span th:if="${tt.vip}" class="badge badge-vip">VIP</span>
+                <span class="badge badge-zones" th:text="${tt.accessibleZones.size()} + ' zones'">2 zones</span>
+            </div>
+            <div class="ticket-zones">
+                <span th:each="zone, stat : ${tt.accessibleZones}">
+                    <span th:text="${zone.name}">Zone</span><span th:if="${!stat.last}">, </span>
+                </span>
+            </div>
+        </a>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <span class="ticket-price" th:text="${#numbers.formatDecimal(tt.initialPrice, 1, 2)} + ' zl'">49.99 zl</span>
+            <form th:action="@{/cart/add}" method="post" style="margin: 0;">
+                <input type="hidden" name="ticketTypeId" th:value="${tt.id}">
+                <button type="submit" class="btn btn-primary btn-sm">+ Add</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ZONES FOR SELECTED TICKET TYPE -->
+    <div th:if="${selectedTicketType != null}" class="card">
+        <div class="card-header">
+            Zones accessible with
+            <span th:text="${selectedTicketType.typeName}" style="color: var(--primary);">Day Pass</span>
+        </div>
+        <div class="zone-list">
+            <a th:each="zone : ${zones}"
+               th:href="@{/tickets(ticketTypeId=${selectedTicketType.id}, zoneId=${zone.id})}"
+               style="text-decoration: none; color: inherit;">
+                <div class="zone-item"
+                     th:classappend="${selectedZone != null && selectedZone.id == zone.id} ? 'selected' : ''">
+                    <div class="item-info">
+                        <h3 th:text="${zone.name}">Zone Name</h3>
+                        <p th:text="${zone.theme}">Theme</p>
+                    </div>
+                    <div class="item-meta">
+                        <span th:text="${zone.openingTime} + ' - ' + ${zone.closingTime}">09:00 - 21:00</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ATTRACTIONS FOR SELECTED ZONE -->
+    <div th:if="${selectedZone != null}" class="card">
+        <div class="card-header">
+            Attractions in <span th:text="${selectedZone.name}" style="color: var(--primary);">Zone</span>
+        </div>
+        <div th:if="${#lists.isEmpty(attractions)}" class="alert alert-info">
+            No attractions in this zone yet.
+        </div>
+        <div class="attraction-list">
+            <div th:each="attraction : ${attractions}" class="attraction-item">
+                <div class="item-info">
+                    <h3>
+                        <span th:text="${attraction.name}">Attraction</span>
+                        <span th:if="${attraction.doesVipPassWork}" class="badge badge-vip">VIP</span>
+                    </h3>
+                    <p>
+                        <span th:text="${attraction.intensity}">EXTREME</span> &middot;
+                        <span th:text="${attraction.status}">ACTIVE</span> &middot;
+                        Max seats: <span th:text="${attraction.maxSeats}">24</span>
+                    </p>
+                </div>
+                <div class="item-meta">
+                    <span th:text="${attraction.attractionHeight} + 'm height'">25m</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-row" style="margin-top: 24px;">
+        <a th:href="@{/cart}" class="btn btn-outline btn-block">View Cart</a>
+    </div>
+</div>
+</body>
+</html>

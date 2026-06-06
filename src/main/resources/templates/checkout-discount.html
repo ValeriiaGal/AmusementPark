@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Discount - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+  <div th:replace="~{fragments :: stepper(${step})}"></div>
+
+  <div class="card">
+    <div class="card-header">Personal Discount</div>
+    <p style="color: var(--text-light); margin-bottom: 16px;">Enter your discount code if you have one</p>
+
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div th:if="${personalDiscount != null}" class="alert alert-success">
+      Discount of <span th:text="${personalDiscount}">20</span>% is applied.
+    </div>
+
+    <form th:action="@{/checkout/discount}" method="post">
+      <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+        <input type="text" name="discountCode" class="form-control"
+               placeholder="Enter code..." style="flex: 1;">
+        <button type="submit" class="btn btn-primary">Validate</button>
+      </div>
+      <div class="alert alert-info">
+        Test codes: ADVENTURE10 (10%), PARK20 (20%), SUMMER15 (15%)
+      </div>
+    </form>
+
+    <div class="btn-row">
+      <a th:href="@{/checkout/promotions}" class="btn btn-outline">← Back</a>
+      <form th:action="@{/checkout/skip-discount}" method="post" style="flex: 1; margin: 0;">
+        <button type="submit" class="btn btn-outline btn-block">No discount</button>
+      </form>
+      <a th:href="@{/checkout/final-summary}" class="btn btn-primary" style="flex: 2;">Continue →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

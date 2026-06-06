@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${title}">Amusement Park</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar" th:fragment="navbar">
+  <a href="/" class="navbar-brand">FinalRide</a>
+  <ul class="navbar-nav">
+    <li><a th:href="@{/tickets}">Ticket Types</a></li>
+    <li><a th:href="@{/cart}">Cart</a></li>
+  </ul>
+</nav>
+
+<div th:fragment="stepper(currentStep)" class="stepper">
+  <div class="step" th:classappend="${currentStep >= 1 ? (currentStep > 1 ? 'done' : 'active') : ''}">
+    <span class="step-number">1</span> Cart
+  </div><span class="step-separator"></span>
+  <div class="step" th:classappend="${currentStep >= 2 ? (currentStep > 2 ? 'done' : 'active') : ''}">
+    <span class="step-number">2</span> Summary
+  </div><span class="step-separator"></span>
+  <div class="step" th:classappend="${currentStep >= 3 ? (currentStep > 3 ? 'done' : 'active') : ''}">
+    <span class="step-number">3</span> Promotion
+  </div><span class="step-separator"></span>
+  <div class="step" th:classappend="${currentStep >= 4 ? (currentStep > 4 ? 'done' : 'active') : ''}">
+    <span class="step-number">4</span> Discount
+  </div><span class="step-separator"></span>
+  <div class="step" th:classappend="${currentStep >= 5 ? (currentStep > 5 ? 'done' : 'active') : ''}">
+    <span class="step-number">5</span> Final
+  </div><span class="step-separator"></span>
+  <div class="step" th:classappend="${currentStep >= 6 ? (currentStep > 6 ? 'done' : 'active') : ''}">
+    <span class="step-number">6</span> Payment
+  </div><span class="step-separator"></span>
+  <div class="step" th:classappend="${currentStep >= 7 ? (currentStep > 7 ? 'done' : 'active') : ''}">
+    <span class="step-number">7</span> Details
+  </div><span class="step-separator"></span>
+  <div class="step" th:classappend="${currentStep >= 8 ? 'active' : ''}">
+    <span class="step-number">8</span> Confirmed
+  </div>
+</div>
+
+<div th:fragment="alerts">
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Final Summary - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+  <div th:replace="~{fragments :: stepper(${step})}"></div>
+
+  <div class="card">
+    <div class="card-header">Final Summary</div>
+    <p style="color: var(--text-light); margin-bottom: 16px;">Review your final prices</p>
+
+    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <span th:if="${promotion != null}" class="badge badge-discount"
+                  th:text="${promotion.name} + ' (-' + ${promotion.promotionPercentage} + '%)'">Summer Sale (-15%)</span>
+      <span th:if="${personalDiscount != null}" class="badge badge-discount"
+            th:text="'Personal -' + ${personalDiscount} + '%'">Personal -20%</span>
+      <span th:if="${promotion == null && personalDiscount == null}"
+            style="color: var(--text-light); font-size: 0.9rem;">No discounts applied</span>
+    </div>
+
+    <div th:each="item : ${cartItems}" class="card" style="border-left: 4px solid var(--primary);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div class="ticket-name">
+            <span th:text="${item.ticketTypeName}">Day Pass</span>
+            <span th:if="${item.vip}" class="badge badge-vip">VIP</span>
+          </div>
+          <div class="ticket-zones">
+                        <span class="price-old"
+                              th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">49.99</span>
+            → <span class="price-new"
+                    th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)} + ' zl'">33.99 zl</span>
+            &times; <span th:text="${item.quantity}">2</span>
+          </div>
+        </div>
+        <div class="ticket-price"
+             th:text="${#numbers.formatDecimal(item.unitPrice * item.quantity, 1, 2)} + ' zl'">67.98 zl</div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align: center; padding: 24px; background: var(--bg);">
+      <div style="color: var(--text-light); margin-bottom: 4px;">Total to Pay</div>
+      <div style="font-size: 2rem; font-weight: 700; color: var(--primary);"
+           th:text="${#numbers.formatDecimal(total, 1, 2)} + ' zl'">231.17 zl</div>
+    </div>
+
+    <div class="btn-row">
+      <a th:href="@{/checkout/discount}" class="btn btn-outline">← Back</a>
+      <a class="btn btn-danger" th:href="@{/cart}">Cancel</a>
+      <a th:href="@{/checkout/payment}" class="btn btn-primary" style="flex: 2;">Pay →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

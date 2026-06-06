@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Payment Details - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+  <div th:replace="~{fragments :: stepper(${step})}"></div>
+  <div th:replace="~{fragments :: alerts}"></div>
+
+  <div class="card">
+    <div class="card-header">Payment Details</div>
+
+    <p style="color: var(--text-light); margin-bottom: 16px;">
+      Method: <strong th:text="${paymentMethod}">Credit Card</strong><br>
+      Amount: <strong th:text="${#numbers.formatDecimal(total, 1, 2)} + ' zl'" style="color: var(--primary);">244.77 zl</strong>
+    </p>
+
+    <form th:action="@{/checkout/pay}" method="post">
+
+      <div th:if="${paymentMethod == 'Credit Card'}">
+        <label>Cardholder name</label>
+        <input class="form-control" type="text" name="cardholderName" required>
+
+        <label>Card number</label>
+        <input class="form-control" type="text" name="cardNumber" maxlength="19" required>
+
+        <label>Expiry date</label>
+        <input class="form-control" type="text" name="expiryDate" placeholder="MM/YY" required>
+
+        <label>CVV</label>
+        <input class="form-control" type="password" name="cvv" maxlength="4" required>
+      </div>
+
+      <div th:if="${paymentMethod == 'BLIK'}">
+        <label>BLIK code</label>
+        <input class="form-control" type="text" name="blikCode" maxlength="6" required>
+      </div>
+
+      <div th:if="${paymentMethod == 'Bank Transfer'}">
+        <label>Account holder name</label>
+        <input class="form-control" type="text" name="accountHolder" required>
+
+        <label>Email for transfer confirmation</label>
+        <input class="form-control" type="email" name="transferEmail" required>
+      </div>
+
+      <div th:if="${paymentMethod == 'Google Pay'}">
+        <label>Google Pay email</label>
+        <input class="form-control" type="email" name="googlePayEmail" required>
+      </div>
+
+      <div class="btn-row" style="margin-top: 20px;">
+        <a th:href="@{/checkout/payment}" class="btn btn-outline">← Back</a>
+        <button type="submit" class="btn btn-success" style="flex: 2;">
+          Confirm Payment
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

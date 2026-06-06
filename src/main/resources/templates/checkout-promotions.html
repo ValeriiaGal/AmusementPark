@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Promotion - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+  <div th:replace="~{fragments :: stepper(${step})}"></div>
+
+  <div class="card">
+    <div class="card-header">Apply a Promotion</div>
+    <p style="color: var(--text-light); margin-bottom: 16px;">Select a promotion or skip</p>
+
+    <div th:if="${#lists.isEmpty(promotions)}" class="alert alert-info">
+      No active promotions available. Continue to the next step.
+    </div>
+
+    <form th:action="@{/checkout/promotions}" method="post">
+      <div th:each="promo : ${promotions}" class="promo-card" style="margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <input type="radio" name="promotionId" th:value="${promo.id}"
+                 th:checked="${selectedPromotionId != null && selectedPromotionId == promo.id}">
+          <div>
+            <strong th:text="${promo.name}">Summer Sale</strong>
+            <div style="font-size: 0.85rem; color: var(--text-light);"
+                 th:text="${promo.startDate} + ' – ' + ${promo.endDate}">dates</div>
+          </div>
+        </div>
+        <span class="promo-discount" th:text="'-' + ${promo.promotionPercentage} + '%'">-15%</span>
+      </div>
+
+      <div class="btn-row">
+        <a th:href="@{/checkout/summary}" class="btn btn-outline">← Back</a>
+        <button type="submit" formaction="/checkout/promotions" name="promotionId" value=""
+                class="btn btn-outline">No, continue without promotion</button>
+        <button type="submit" class="btn btn-primary" style="flex: 2;"
+                th:disabled="${#lists.isEmpty(promotions)}">Apply &amp; Next →</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

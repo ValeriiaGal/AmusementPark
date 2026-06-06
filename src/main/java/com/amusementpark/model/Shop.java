@@ -23,7 +23,6 @@ public class Shop {
     @NotBlank
     private String name;
 
-    // enum shop type
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "shop_type")
@@ -33,9 +32,8 @@ public class Shop {
     @Column(name = "location")
     private String location;
 
-    // Basic association: Shop - Zone (many to one)
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 

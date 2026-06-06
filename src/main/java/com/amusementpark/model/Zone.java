@@ -39,19 +39,16 @@ public class Zone {
     @Column(name = "closing_time")
     private LocalTime closingTime;
 
-    // basic association: Zone has Attractions (1 to many)
     @Builder.Default
-    @OneToMany(mappedBy = "zone", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "zone", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Attraction> attractions = new HashSet<>();
 
-    // basic association: Zone has Shops (1 to many)
     @Builder.Default
-    @OneToMany(mappedBy = "zone", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "zone", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Shop> shops = new HashSet<>();
 
-    // Qualified association: Zone has TicketTypes (many to many)
     @Builder.Default
-    @ManyToMany(mappedBy = "zonesByName")
+    @ManyToMany(mappedBy = "zonesByName", fetch = FetchType.LAZY)
     private Set<TicketType> acceptedTicketTypes = new HashSet<>();
 
     @AssertTrue(message = "Closing time must be after opening time")

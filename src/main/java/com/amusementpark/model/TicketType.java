@@ -34,21 +34,20 @@ public class TicketType {
     @Column(name = "initial_price")
     private double initialPrice;
 
-    // Qualified association: Zone has TicketTypes (many to many)
     @Builder.Default
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "ticket_type_zone",
             joinColumns = @JoinColumn(name = "ticket_type_id"),
             inverseJoinColumns = @JoinColumn(name = "zone_id")
     )
     @MapKey(name = "name")
+    @Size(min = 1, message = "Ticket type must provide access to at least one zone")
     private Map<String, Zone> zonesByName = new HashMap<>();
 
 
-    // Basic association: TicketType - Tickets (1 to many)
     @Builder.Default
-    @OneToMany(mappedBy = "ticketType", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "ticketType", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Ticket> tickets = new HashSet<>();
 
 

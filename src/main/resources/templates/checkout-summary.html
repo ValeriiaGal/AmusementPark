@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Summary - FinalRide')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+  <div th:replace="~{fragments :: stepper(${step})}"></div>
+
+  <div class="card">
+    <div class="card-header">Order Summary &amp; Zones</div>
+    <p style="color: var(--text-light); margin-bottom: 16px;">Expand a ticket type to see zones and attractions</p>
+
+    <div th:each="entry : ${itemsWithZones}" class="card" style="border-left: 4px solid var(--primary);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div class="ticket-name">
+            <span th:text="${entry.item.ticketTypeName}">Day Pass</span>
+            <span th:if="${entry.item.vip}" class="badge badge-vip">VIP</span>
+            <span class="badge badge-zones" th:text="${entry.item.zoneCount} + ' zones'">2 zones</span>
+          </div>
+          <div class="ticket-zones"
+               th:text="${entry.item.startDate} + ' → ' + ${entry.item.endDate} + ' · Qty: ' + ${entry.item.quantity}">
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div class="ticket-price"
+               th:text="${#numbers.formatDecimal(entry.item.unitPrice * entry.item.quantity, 1, 2)} + ' zl'">99.98</div>
+          <div style="font-size: 0.8rem; color: var(--text-light);"
+               th:text="${#numbers.formatDecimal(entry.item.unitPrice, 1, 2)} + ' each'">49.99 each</div>
+        </div>
+      </div>
+
+      <details style="margin-top: 12px;">
+        <summary style="cursor: pointer; color: var(--primary); font-weight: 600; padding: 8px 0;">
+          Show accessible zones &amp; attractions
+        </summary>
+        <div th:each="zoneEntry : ${entry.zonesWithAttractions}" class="zones-detail" style="margin-top: 8px; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong th:text="${zoneEntry.zone.name}">Zone Name</strong>
+            <span style="font-size: 0.8rem; color: var(--text-light);"
+                  th:text="${zoneEntry.zone.openingTime} + ' - ' + ${zoneEntry.zone.closingTime}">09:00 - 21:00</span>
+          </div>
+          <div th:each="attraction : ${zoneEntry.attractions}" class="attraction-item" style="padding: 8px 12px; margin: 4px 0;">
+            <div class="item-info">
+              <h3 style="font-size: 0.9rem;">
+                <span th:text="${attraction.name}">Attraction</span>
+                <span th:if="${attraction.doesVipPassWork}" class="badge badge-vip">VIP</span>
+              </h3>
+              <p style="font-size: 0.8rem;">
+                <span th:text="${attraction.intensity}">EXTREME</span> &middot;
+                <span th:text="${attraction.status}">ACTIVE</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="total-row">
+      <span class="total-label">Subtotal</span>
+      <span class="total-amount" th:text="${#numbers.formatDecimal(total, 1, 2)} + ' zl'">339.96 zl</span>
+    </div>
+
+    <div class="btn-row">
+      <a th:href="@{/cart}" class="btn btn-outline">← Back</a>
+      <a class="btn btn-danger" th:href="@{/cart}">Cancel</a>
+      <a th:href="@{/checkout/promotions}" class="btn btn-primary" style="flex: 2;">Continue →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

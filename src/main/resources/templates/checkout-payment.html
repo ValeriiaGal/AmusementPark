@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Payment - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+  <div th:replace="~{fragments :: stepper(${step})}"></div>
+
+  <div th:replace="~{fragments :: alerts}"></div>
+
+  <div class="card">
+    <div class="card-header">Payment Method</div>
+    <p style="color: var(--text-light); margin-bottom: 16px;">
+      Amount: <strong th:text="${#numbers.formatDecimal(total, 1, 2)} + ' zl'" style="color: var(--primary);">244.77 zl</strong>
+    </p>
+
+    <form th:action="@{/checkout/payment-method}" method="post">
+      <div class="payment-option" style="margin-bottom: 12px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="radio" name="paymentMethod" value="Credit Card" checked> Credit / Debit Card
+        </label>
+      </div>
+      <div class="payment-option" style="margin-bottom: 12px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="radio" name="paymentMethod" value="BLIK"> BLIK
+        </label>
+      </div>
+      <div class="payment-option" style="margin-bottom: 12px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="radio" name="paymentMethod" value="Bank Transfer"> Bank Transfer
+        </label>
+      </div>
+      <div class="payment-option" style="margin-bottom: 12px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="radio" name="paymentMethod" value="Google Pay"> Google Pay
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <a th:href="@{/checkout/final-summary}" class="btn btn-outline">← Back</a>
+        <button type="submit" class="btn btn-success" style="flex: 2;">
+          Buy — <span th:text="${#numbers.formatDecimal(total, 1, 2)} + ' zl'">244.77 zl</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

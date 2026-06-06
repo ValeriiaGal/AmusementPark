@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Confirmed - AdventureLand')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+    <div th:replace="~{fragments :: stepper(${step})}"></div>
+
+    <div class="confirmation-header">
+        <h2>Payment Successful!</h2>
+        <p>Order: <strong th:text="${order.orderNumber}" style="color: var(--primary);">ORD-711868</strong></p>
+    </div>
+
+    <div th:each="ticket, stat : ${order.tickets}" class="card" style="border-left: 4px solid var(--success);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div class="ticket-name">
+                    <span style="color: var(--text-light); margin-right: 4px;"
+                          th:text="'#' + ${stat.count}">1</span>
+                    <span th:text="${ticket.ticketType.typeName}">Day Pass</span>
+                    <span th:if="${ticket.ticketType.vip}" class="badge badge-vip">VIP</span>
+                </div>
+                <div class="ticket-zones"
+                     th:text="${ticket.startDate} + ' → ' + ${ticket.endDate}">dates</div>
+            </div>
+            <div style="text-align: right;">
+                <span class="badge badge-discount">PAID</span>
+                <div class="ticket-price"
+                     th:text="${#numbers.formatDecimal(ticket.ticketType.initialPrice * ticket.quantity, 1, 2)} + ' zl'">35.99 zl</div>
+            </div>
+        </div>
+        <div class="zones-detail" style="margin-top: 8px;">
+            <span>Zones: </span>
+            <span th:each="zone : ${ticket.ticketType.accessibleZones}" class="zone-tag"
+                  th:text="${zone.name}">Zone</span>
+        </div>
+    </div>
+
+    <div class="card" style="text-align: center; padding: 24px; background: var(--bg);">
+        <div style="color: var(--text-light); margin-bottom: 4px;">Total Paid</div>
+        <div style="font-size: 2rem; font-weight: 700; color: var(--success);"
+             th:text="${#numbers.formatDecimal(order.getTotalPrice(), 1, 2)} + ' zl'">244.77 zl</div>
+    </div>
+
+    <a th:href="@{/}" class="btn btn-primary btn-block" style="margin-top: 16px;">Return to Home</a>
+</div>
+</body>
+</html>
