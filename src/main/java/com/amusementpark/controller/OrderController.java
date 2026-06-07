@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +107,12 @@ public class OrderController {
         model.addAttribute("total", cartService.calculateCartTotal(cart));
         model.addAttribute("step", 1);
         return "cart";
+    }
+
+    @GetMapping("/orders")
+    public String viewPersistedOrders(Model model) {
+        model.addAttribute("orders", orderService.getAllOrdersWithTickets());
+        return "orders";
     }
 
     @PostMapping("/cart/update")
@@ -206,7 +213,19 @@ public class OrderController {
         Integer personalDiscount = (Integer) session.getAttribute("personalDiscount");
         Promotion promotion = orderService.getActivePromotionById(promotionId).orElse(null);
 
+        Map<Long, Double> discountedUnitPrices = new HashMap<>();
+        Map<Long, Double> discountedLineTotals = new HashMap<>();
+        for (CartItem item : cart.values()) {
+            double discountedUnitPrice = orderService.calculateDiscountedUnitPrice(
+                    item.getUnitPrice(), promotionId, personalDiscount
+            );
+            discountedUnitPrices.put(item.getTicketTypeId(), discountedUnitPrice);
+            discountedLineTotals.put(item.getTicketTypeId(), discountedUnitPrice * item.getQuantity());
+        }
+
         model.addAttribute("cartItems", cart.values());
+        model.addAttribute("discountedUnitPrices", discountedUnitPrices);
+        model.addAttribute("discountedLineTotals", discountedLineTotals);
         model.addAttribute("promotion", promotion);
         model.addAttribute("personalDiscount", personalDiscount);
         model.addAttribute("subtotal", cartService.calculateCartTotal(cart));

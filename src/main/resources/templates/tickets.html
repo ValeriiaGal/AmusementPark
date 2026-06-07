@@ -9,7 +9,6 @@
 
     <div th:replace="~{fragments :: alerts}"></div>
 
-    <!-- TICKET TYPE LIST -->
     <div th:each="tt : ${ticketTypes}" class="card ticket-card">
         <a th:href="@{/tickets(ticketTypeId=${tt.id})}"
            style="text-decoration: none; color: inherit; flex: 1;">
@@ -33,7 +32,6 @@
         </div>
     </div>
 
-    <!-- ZONES FOR SELECTED TICKET TYPE -->
     <div th:if="${selectedTicketType != null}" class="card">
         <div class="card-header">
             Zones accessible with
@@ -57,7 +55,6 @@
         </div>
     </div>
 
-    <!-- ATTRACTIONS FOR SELECTED ZONE -->
     <div th:if="${selectedZone != null}" class="card">
         <div class="card-header">
             Attractions in <span th:text="${selectedZone.name}" style="color: var(--primary);">Zone</span>

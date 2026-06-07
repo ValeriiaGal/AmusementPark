@@ -12,10 +12,37 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-
-    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.tickets t LEFT JOIN FETCH t.ticketType tt LEFT JOIN FETCH tt.zonesByName WHERE o.id = :id")
+    @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.promotion
+            LEFT JOIN FETCH o.tickets t
+            LEFT JOIN FETCH t.ticketType tt
+            LEFT JOIN FETCH tt.zonesByName
+            WHERE o.id = :id
+            """)
     Optional<Order> findByIdWithTicketsAndTypes(@Param("id") Long id);
 
-    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.tickets t LEFT JOIN FETCH t.ticketType tt LEFT JOIN FETCH tt.zonesByName WHERE o.customer.id = :customerId")
+    @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.promotion
+            LEFT JOIN FETCH o.tickets t
+            LEFT JOIN FETCH t.ticketType tt
+            LEFT JOIN FETCH tt.zonesByName
+            ORDER BY o.id DESC
+            """)
+    List<Order> findAllWithTicketsAndTypes();
+
+    @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.promotion
+            LEFT JOIN FETCH o.tickets t
+            LEFT JOIN FETCH t.ticketType tt
+            LEFT JOIN FETCH tt.zonesByName
+            WHERE o.customer.id = :customerId
+            ORDER BY o.id DESC
+            """)
     List<Order> findByCustomerIdWithTicketsAndTypes(@Param("customerId") Long customerId);
 }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Purchased Tickets - FinalRide')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <h1 class="page-title">Purchased Tickets</h1>
+    <p class="page-subtitle">Orders loaded from the database.</p>
+
+    <div th:replace="~{fragments :: alerts}"></div>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="card" style="text-align: center; padding: 32px;">
+        <h2>No orders yet</h2>
+        <p style="color: var(--text-light); margin-top: 8px;">Completed purchases will appear here after payment</p>
+        <a th:href="@{/tickets}" class="btn btn-primary" style="margin-top: 16px;">Buy Tickets</a>
+    </div>
+
+    <div th:each="order : ${orders}" class="card" style="border-left: 4px solid var(--primary);">
+        <div style="display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+            <div>
+                <div class="ticket-name">
+                    <span th:text="${order.orderNumber}">ORD-123456</span>
+                    <span class="badge badge-discount" th:text="${order.status}">COMPLETED</span>
+                </div>
+                <div class="ticket-zones">
+                    Customer: <span th:text="${order.customer.name} + ' ' + ${order.customer.surname}">Customer</span>
+                    <span th:if="${order.paymentMethod != null}"> · Payment: <span th:text="${order.paymentMethod}">Credit Card</span></span>
+                </div>
+                <div class="ticket-zones" th:if="${order.promotion != null || order.personalDiscount != null}">
+                    <span th:if="${order.promotion != null}" th:text="${order.promotion.name} + ' (-' + ${order.promotion.promotionPercentage} + '%)'"></span>
+                    <span th:if="${order.promotion != null && order.personalDiscount != null}"> · </span>
+                    <span th:if="${order.personalDiscount != null}" th:text="'Personal -' + ${order.personalDiscount} + '%'"></span>
+                </div>
+            </div>
+            <div class="ticket-price" th:text="${#numbers.formatDecimal(order.getTotalPrice(), 1, 2)} + ' zl'">99.99 zl</div>
+        </div>
+
+        <div class="zones-detail" style="margin-top: 14px;">
+            <div th:each="ticket, stat : ${order.tickets}" class="attraction-item" style="margin: 8px 0;">
+                <div class="item-info">
+                    <h3>
+                        <span th:text="${ticket.ticketType.typeName}">Day Pass</span>
+                        <span th:if="${ticket.ticketType.vip}" class="badge badge-vip">VIP</span>
+                    </h3>
+                    <p>
+                        <span th:text="${ticket.startDate} + ' → ' + ${ticket.endDate}">dates</span>
+                        · Qty: <span th:text="${ticket.quantity}">1</span>
+                    </p>
+                    <div style="margin-top: 6px;">
+                        <span th:each="zone : ${ticket.ticketType.accessibleZones}" class="zone-tag" th:text="${zone.name}">Zone</span>
+                    </div>
+                </div>
+                <div class="item-meta">
+                    <span th:text="${#numbers.formatDecimal(ticket.ticketType.initialPrice * ticket.quantity, 1, 2)} + ' zl'"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

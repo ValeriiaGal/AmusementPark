@@ -60,6 +60,12 @@ public class OrderService {
     }
 
 
+
+    @Transactional(readOnly = true)
+    public List<Order> getAllOrdersWithTickets() {
+        return orderRepository.findAllWithTicketsAndTypes();
+    }
+
     @Transactional(readOnly = true)
     public Customer getDefaultCustomer() {
         return customerRepository.findAll().stream().findFirst()
@@ -160,19 +166,29 @@ public class OrderService {
             }
         }
 
+        return applyDiscounts(total, promotionId, personalDiscount);
+    }
+
+    @Transactional(readOnly = true)
+    public double calculateDiscountedUnitPrice(double unitPrice, Long promotionId, Integer personalDiscount) {
+        return applyDiscounts(unitPrice, promotionId, personalDiscount);
+    }
+
+    private double applyDiscounts(double value, Long promotionId, Integer personalDiscount) {
+        double discountedValue = value;
 
         if (promotionId != null) {
             Promotion promo = promotionRepository.findById(promotionId).orElse(null);
             if (promo != null && promo.isActive(LocalDate.now())) {
-                total = total * (1 - promo.getPromotionPercentage() / 100.0);
+                discountedValue = discountedValue * (1 - promo.getPromotionPercentage() / 100.0);
             }
         }
 
         if (personalDiscount != null && personalDiscount > 0) {
-            total = total * (1 - personalDiscount / 100.0);
+            discountedValue = discountedValue * (1 - personalDiscount / 100.0);
         }
 
-        return Math.round(total * 100.0) / 100.0;
+        return Math.round(discountedValue * 100.0) / 100.0;
     }
 
 

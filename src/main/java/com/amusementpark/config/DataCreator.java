@@ -398,14 +398,14 @@ public class DataCreator implements CommandLineRunner {
 
         Promotion earlyBird = Promotion.builder()
                 .name("Early Bird")
-                .startDate(LocalDate.of(2026, 7, 1))
+                .startDate(LocalDate.of(2026, 6, 1))
                 .endDate(LocalDate.of(2026, 7, 31))
                 .promotionPercentage(10)
                 .build();
 
         Promotion familyDeal = Promotion.builder()
                 .name("Family Deal")
-                .startDate(LocalDate.of(2026, 6, 15))
+                .startDate(LocalDate.of(2026, 6, 1))
                 .endDate(LocalDate.of(2026, 9, 15))
                 .promotionPercentage(20)
                 .build();
